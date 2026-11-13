@@ -14,6 +14,11 @@ class Post extends Model
     /** @use HasFactory<PostFactory> */
     use HasFactory;
 
+    /**
+     * My five Lab 10 categories, used by the create form and StorePostRequest.
+     */
+    public const CATEGORIES = ['Announcement', 'Health', 'Peace & Order', 'Ayuda', 'Livelihood'];
+
     protected $fillable = [
         'author_id',
         'title',

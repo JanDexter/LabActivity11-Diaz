@@ -31,8 +31,38 @@
         <div class="mt-4 leading-relaxed whitespace-pre-line">{{ $post->body }}</div>
     </article>
 
-    <section class="mt-8 border-t border-gray-200 pt-6">
+    <section id="comments" class="mt-8 border-t border-gray-200 pt-6">
         <h2 class="text-lg font-semibold mb-4">Comments ({{ $post->comments->count() }})</h2>
+
+        @auth
+            <form method="POST" action="{{ route('comments.store', $post) }}" class="mb-6 space-y-2">
+                @csrf
+
+                @if ($errors->any())
+                    <div class="border border-red-300 bg-red-50 text-red-700 rounded px-4 py-2 text-sm">
+                        <p class="font-semibold">Please fix the following:</p>
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <label for="body" class="block text-sm font-medium">Write a comment</label>
+                <textarea id="body" name="body" rows="3" placeholder="Unsa imong comment?"
+                          class="w-full border rounded p-2 focus:outline-none focus:border-emerald-600 @error('body') border-red-500 @else border-gray-300 @enderror">{{ old('body') }}</textarea>
+                @error('body') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+
+                <button class="bg-emerald-700 hover:bg-emerald-800 text-white rounded px-4 py-2">Post comment</button>
+            </form>
+        @endauth
+
+        @guest
+            <p class="mb-6 text-sm text-gray-600">
+                <a href="{{ route('login') }}" class="text-emerald-700 hover:underline">Sign in to comment</a>
+            </p>
+        @endguest
 
         @forelse ($post->comments as $comment)
             <div class="border-b border-gray-100 py-3">

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use App\Models\Tag;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -41,6 +43,40 @@ class PostController extends Controller
         $tags = Tag::query()->orderBy('name')->pluck('name');
 
         return view('posts.index', compact('posts', 'categories', 'tags'));
+    }
+
+    /**
+     * Residents can't post, so they get the same 403 here instead of seeing a form they can't submit.
+     */
+    public function create(Request $request): View
+    {
+        abort_if($request->user()->author === null, 403);
+
+        $categories = Post::CATEGORIES;
+        $tags = Tag::query()->orderBy('name')->get();
+
+        return view('posts.create', compact('categories', 'tags'));
+    }
+
+    public function store(StorePostRequest $request): RedirectResponse
+    {
+        $isPublished = $request->boolean('is_published');
+
+        // tags are not a column on posts, so leave them out of create() and sync them after
+        $post = $request->user()->author->posts()->create([
+            ...$request->safe()->except('tags'),
+            'is_published' => $isPublished,
+            'published_at' => $isPublished ? now() : null,
+        ]);
+
+        $post->tags()->sync($request->validated('tags'));
+
+        // drafts 404 on the show page, so send those back to the list instead
+        if (! $isPublished) {
+            return redirect()->route('posts.index')->with('status', 'Draft saved.');
+        }
+
+        return redirect()->route('posts.show', $post->id)->with('status', 'Post published.');
     }
 
     /**

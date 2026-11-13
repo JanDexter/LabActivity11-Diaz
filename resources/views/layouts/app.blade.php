@@ -12,6 +12,12 @@
             <div class="flex flex-wrap items-center gap-x-4 gap-y-1 sm:gap-x-6">
                 <a href="{{ route('posts.index') }}" class="font-semibold">Barangay Bulletin – Purok Diaz</a>
                 <a href="{{ route('posts.index') }}" class="text-sm hover:underline">All Posts</a>
+                {{-- only officials with an author profile can write posts --}}
+                @auth
+                    @if (auth()->user()->author)
+                        <a href="{{ route('posts.create') }}" class="text-sm hover:underline">New post</a>
+                    @endif
+                @endauth
             </div>
             <div class="flex items-center gap-3 sm:gap-4 text-sm">
                 @auth
@@ -29,6 +35,12 @@
     </nav>
 
     <main class="flex-1 w-full max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+        @if (session('status'))
+            <div class="mb-4 border border-emerald-300 bg-emerald-50 text-emerald-800 rounded px-4 py-2 text-sm">
+                {{ session('status') }}
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
