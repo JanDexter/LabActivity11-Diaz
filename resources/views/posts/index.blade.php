@@ -14,28 +14,26 @@
             @endforeach
         </select>
 
+        <select name="tag" class="border border-gray-300 rounded px-3 py-2">
+            <option value="">All tags</option>
+            @foreach ($tags as $t)
+                <option value="{{ $t }}" @selected(request('tag') === $t)>{{ $t }}</option>
+            @endforeach
+        </select>
+
         <button class="bg-emerald-700 text-white rounded px-4 py-2 hover:bg-emerald-800">Filter</button>
     </form>
 
+    @if (request('tag'))
+        <p class="text-sm text-gray-600 mb-4">
+            Showing posts tagged <span class="font-semibold">#{{ request('tag') }}</span> ·
+            <a href="{{ route('posts.index', request()->except('tag', 'page')) }}" class="text-emerald-700 hover:underline">clear tag</a>
+        </p>
+    @endif
+
     <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         @forelse ($posts as $post)
-            <div class="border rounded p-4 {{ $post->is_pinned ? 'border-amber-400 bg-amber-50' : 'border-gray-200' }}">
-                <div class="flex flex-wrap gap-2 mb-2">
-                    @if ($post->is_pinned)
-                        <span class="text-xs font-semibold bg-amber-400 text-amber-950 rounded px-2 py-0.5">Pinned</span>
-                    @endif
-                    <span class="text-xs bg-emerald-100 text-emerald-800 rounded px-2 py-0.5">{{ $post->category }}</span>
-                </div>
-
-                <a href="{{ route('posts.show', $post->id) }}" class="font-semibold hover:underline">
-                    {{ $post->title }}
-                </a>
-
-                <p class="text-sm text-gray-500 mt-2">
-                    {{ $post->published_at->format('M d, Y') }} · Author #{{ $post->author_id }}
-                </p>
-                <p class="text-sm text-gray-500">{{ $post->views }} views</p>
-            </div>
+            @include('posts._card', ['post' => $post])
         @empty
             <p class="text-gray-600">No posts match your search.</p>
         @endforelse

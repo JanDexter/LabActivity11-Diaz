@@ -16,9 +16,34 @@
         <h1 class="text-2xl md:text-3xl font-bold">{{ $post->title }}</h1>
 
         <p class="text-sm text-gray-500 mt-1">
-            Published {{ $post->published_at->format('F d, Y') }} · Author #{{ $post->author_id }} · {{ $post->views }} views
+            Published {{ $post->published_at->format('F d, Y') }} ·
+            <a href="{{ route('authors.show', $post->author) }}" class="text-emerald-700 hover:underline">{{ $post->author->name }}</a>
+            ({{ $post->author->position }}) · {{ $post->views }} views
         </p>
+
+        <div class="flex flex-wrap gap-1 mt-3">
+            @foreach ($post->tags as $tag)
+                <a href="{{ route('posts.index', ['tag' => $tag->name]) }}"
+                   class="text-xs bg-gray-100 text-gray-700 rounded-full px-2 py-0.5 hover:bg-gray-200">#{{ $tag->name }}</a>
+            @endforeach
+        </div>
 
         <div class="mt-4 leading-relaxed whitespace-pre-line">{{ $post->body }}</div>
     </article>
+
+    <section class="mt-8 border-t border-gray-200 pt-6">
+        <h2 class="text-lg font-semibold mb-4">Comments ({{ $post->comments->count() }})</h2>
+
+        @forelse ($post->comments as $comment)
+            <div class="border-b border-gray-100 py-3">
+                <p class="text-sm">
+                    <span class="font-semibold">{{ $comment->user->name }}</span>
+                    <span class="text-gray-500">· {{ $comment->created_at->diffForHumans() }}</span>
+                </p>
+                <p class="mt-1 whitespace-pre-line">{{ $comment->body }}</p>
+            </div>
+        @empty
+            <p class="text-gray-600">No comments yet.</p>
+        @endforelse
+    </section>
 @endsection
