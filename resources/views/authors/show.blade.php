@@ -20,4 +20,22 @@
             <p class="text-gray-600">This author has no published posts yet.</p>
         @endforelse
     </div>
+
+    <section class="mt-8 border-t border-gray-200 pt-6">
+        <h2 class="text-lg font-semibold mb-4">Latest comments on their posts</h2>
+
+        @forelse ($latestComments as $comment)
+            <div class="border-b border-gray-100 py-3">
+                <p class="text-sm">
+                    <span class="font-semibold">{{ $comment->user->name }}</span>
+                    <span class="text-gray-500">on</span>
+                    <a href="{{ route('posts.show', $comment->post->id) }}" class="text-emerald-700 hover:underline">{{ $comment->post->title }}</a>
+                    <span class="text-gray-500">· {{ $comment->created_at->diffForHumans() }}</span>
+                </p>
+                <p class="mt-1 text-gray-700">{{ $comment->body }}</p>
+            </div>
+        @empty
+            <p class="text-gray-600">No comments yet.</p>
+        @endforelse
+    </section>
 @endsection

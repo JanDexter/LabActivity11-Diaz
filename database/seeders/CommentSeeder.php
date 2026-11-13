@@ -41,8 +41,9 @@ class CommentSeeder extends Seeder
             'body' => 'Mo-apil mi ni Mama, magdala mi ug extra nga sako.',
         ]);
 
-        $pinned->comments()->create([
-            'user_id' => $lola->id,
+        // Lola's comment goes through her side of the relationship (User hasMany Comment)
+        $lola->comments()->create([
+            'post_id' => $pinned->id,
             'body' => 'Dili na ko kaya mo-limpyo pero magluto ko ug ginataan para sa mga volunteers.',
         ]);
     }

@@ -40,7 +40,11 @@ class PostController extends Controller
             ->withQueryString();
 
         $categories = Post::query()->distinct()->orderBy('category')->pluck('category');
-        $tags = Tag::query()->orderBy('name')->pluck('name');
+        // Tag -> posts, so the dropdown can show how many published posts each tag has
+        $tags = Tag::query()
+            ->withCount(['posts' => fn ($query) => $query->where('is_published', true)])
+            ->orderBy('name')
+            ->get();
 
         return view('posts.index', compact('posts', 'categories', 'tags'));
     }

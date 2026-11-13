@@ -20,6 +20,14 @@ class AuthorController extends Controller
             ->latest('published_at')
             ->get();
 
-        return view('authors.show', compact('author', 'posts'));
+        // latest comments on this author's posts, with who wrote it and on which post
+        // (comments.created_at because posts also has a created_at in the join)
+        $latestComments = $author->comments()
+            ->with(['user', 'post'])
+            ->latest('comments.created_at')
+            ->take(5)
+            ->get();
+
+        return view('authors.show', compact('author', 'posts', 'latestComments'));
     }
 }

@@ -17,7 +17,7 @@
         <select name="tag" class="border border-gray-300 rounded px-3 py-2">
             <option value="">All tags</option>
             @foreach ($tags as $t)
-                <option value="{{ $t }}" @selected(request('tag') === $t)>{{ $t }}</option>
+                <option value="{{ $t->name }}" @selected(request('tag') === $t->name)>{{ $t->name }} ({{ $t->posts_count }})</option>
             @endforeach
         </select>
 
