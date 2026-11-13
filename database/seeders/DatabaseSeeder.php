@@ -11,10 +11,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // authors first, posts need an existing author_id
+        // order matters: posts need authors, UserSeeder links the Kagawad
+        // author, tags need posts, and comments need both posts and users
         $this->call([
             AuthorSeeder::class,
             PostSeeder::class,
+            UserSeeder::class,
+            TagSeeder::class,
+            CommentSeeder::class,
         ]);
     }
 }
